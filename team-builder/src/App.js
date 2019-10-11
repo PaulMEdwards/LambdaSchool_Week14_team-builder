@@ -6,13 +6,13 @@ import './App.css';
 
 function App() {
   const [teamMembers, setTeamMembers] = useState([
-    {
-      id: 0,
-      name: "Paul M Edwards",
-      email: "pauledwards@gmail.com",
-      role: "Full Stack Web Application Engineer",
-      cardColor: 0
-    }
+    // {
+    //   id: 0,
+    //   name: "Paul M Edwards",
+    //   email: "pauledwards@gmail.com",
+    //   role: "Full Stack Web Application Engineer",
+    //   cardColor: 0
+    // }
   ]);
   const [memberToEdit, setMemberToEdit] = useState();
 
@@ -24,6 +24,7 @@ function App() {
 
   //Store input Team Members into local storage
   useEffect(() => {
+    reflowTeamMemberIds();
     localStorage.setItem('teamMembers', JSON.stringify(teamMembers));
   }, [teamMembers]);
   
@@ -42,12 +43,13 @@ function App() {
   };
 
   const editTeamMember = selectedPerson => {
-    console.log('editTeamMember newPerson: ', selectedPerson);
-    console.log('teamMembers[selectedPerson]: ', teamMembers[selectedPerson]);
+    console.log('editTeamMember: ', selectedPerson);
 
-    setMemberToEdit(teamMembers[selectedPerson]);
+    let newTeam = teamMembers;
+    newTeam[selectedPerson.id] = selectedPerson;
+    setTeamMembers(newTeam);
 
-    // setTeamMembers(targetPerson);
+    setMemberToEdit();
   };
   
   const delTeamMember = id => {
@@ -56,6 +58,22 @@ function App() {
     });
     setTeamMembers(newArray);
   };
+
+  const reflowTeamMemberIds = () => {
+    // console.log('teamMembers before reflow: ', teamMembers);
+
+    let i = 0;
+    teamMembers.forEach(p => {
+      // console.log('p.name: ', p.name);
+      // console.log('p.id before: ', p.id);
+      // console.log('i: ', i);
+      p.id = i;
+      // console.log('p.id after: ', p.id);
+      i++;
+    })
+
+    // console.log('teamMembers after reflow: ', teamMembers);
+  }
 
   return (
     <div className="App">
@@ -67,7 +85,8 @@ function App() {
       />
       <TeamMembers 
         teamMembers={teamMembers} 
-        editTeamMember={editTeamMember} 
+        // editTeamMember={editTeamMember} 
+        setMemberToEdit={setMemberToEdit} 
         delTeamMember={delTeamMember} 
       />
     </div>

@@ -16,7 +16,7 @@ const TeamMembers = props => {
             <p><strong>{person.role}</strong></p>
             <p><a href={"mailto:"+person.email}>{person.email}</a></p>
             <div className="flex button-group">
-              <button onClick={() => props.editTeamMember(person.id)}><FontAwesomeIcon icon={faUserEdit} />&nbsp;Edit</button>
+              <button onClick={() => props.setMemberToEdit(person)}><FontAwesomeIcon icon={faUserEdit} />&nbsp;Edit</button>
               <button onClick={() => props.delTeamMember(person.id)}><FontAwesomeIcon icon={faUserTimes} />&nbsp;Remove</button>
             </div>
           </div>
