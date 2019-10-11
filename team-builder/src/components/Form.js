@@ -1,12 +1,25 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUserPlus } from '@fortawesome/free-solid-svg-icons';
+import { faUserPlus, faUserEdit } from '@fortawesome/free-solid-svg-icons';
 
-library.add(faUserPlus);
+library.add(faUserPlus, faUserEdit);
 
 const PersonForm = props => {
-  const [person, setPerson] = useState({ name: "", role: "", email: "" });
+  const defaultPerson = {
+    name: "",
+    role: "",
+    email: "",
+    cardColor: random(0,3)
+  };
+  const [person, setPerson] = useState(defaultPerson);
+
+  useEffect(() => {
+    if (props.memberToEdit) {
+      console.log('props.memberToEdit: ', props.memberToEdit);
+      setPerson(props.memberToEdit);
+    }
+  }, [props.memberToEdit]);
 
   const handleChange = e => {
     setPerson({ ...person, [e.target.name]: e.target.value });
@@ -14,9 +27,25 @@ const PersonForm = props => {
 
   const handleSubmit = e => {
     e.preventDefault();
-    props.addTeamMember(person);
-    setPerson({ name: "", role: "", email: "" });
+    console.log('handleSubmit e: ', e);
+
+    if (props.memberToEdit) {
+      console.log('props.memberToEdit: ', props.memberToEdit);
+      console.log('editTeamMember person: ', person);
+      props.editTeamMember(person);
+    } else {
+      console.log('addTeamMember person: ', person);
+      props.addTeamMember(person);
+    }
+
+    setPerson(defaultPerson);
   };
+
+  function random(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -28,14 +57,8 @@ const PersonForm = props => {
         name="name"
         onChange={handleChange}
       />
+
       <label htmlFor="role">Role</label>
-      {/* <input
-        id="role"
-        value={person.role}
-        type="text"
-        name="role"
-        onChange={handleChange}
-      /> */}
       <select id="role" name="role" onChange={handleChange}>
         <option value="">...Select a Role...</option>
         <option value="Director of Software Engineering">Director of Software Engineering</option>
@@ -55,6 +78,7 @@ const PersonForm = props => {
         <option value="Product Designer">Product Designer</option>
         <option value="Product Analyst">Product Analyst</option>
       </select>
+
       <label htmlFor="email">Email</label>
       <input
         id="email"
@@ -63,7 +87,10 @@ const PersonForm = props => {
         name="email"
         onChange={handleChange}
       />
-      <button type="submit"><FontAwesomeIcon icon={faUserPlus} />&nbsp;Add Team Member</button>
+
+      <button type="submit">
+        <FontAwesomeIcon icon={props.memberToEdit ? faUserEdit : faUserPlus} />&nbsp;{props.memberToEdit ? 'Update' : 'Add'} Team Member
+      </button>
     </form>
   );
 };

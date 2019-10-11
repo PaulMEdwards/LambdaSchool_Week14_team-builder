@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import PersonForm from './components/Form';
 import TeamMembers from './components/Team';
@@ -10,19 +10,44 @@ function App() {
       id: 0,
       name: "Paul M Edwards",
       email: "pauledwards@gmail.com",
-      role: "Full Stack Web Application Engineer"
+      role: "Full Stack Web Application Engineer",
+      cardColor: 0
     }
   ]);
+  const [memberToEdit, setMemberToEdit] = useState();
+
+  //Fetch previously input Team Members from local storage, if any.
+  useEffect(() => {
+    if (localStorage.getItem('teamMembers'))
+      setTeamMembers(JSON.parse(localStorage.getItem('teamMembers')));
+  }, []);
+
+  //Store input Team Members into local storage
+  useEffect(() => {
+    localStorage.setItem('teamMembers', JSON.stringify(teamMembers));
+  }, [teamMembers]);
   
   const addTeamMember = person => {
+    console.log('addTeamMember person: ', person);
+
     const newPerson = {
       id: teamMembers.length,
       name: person.name,
       role: person.role,
-      email: person.email
+      email: person.email,
+      cardColor: person.cardColor
     };
 
     setTeamMembers([...teamMembers, newPerson]);
+  };
+
+  const editTeamMember = selectedPerson => {
+    console.log('editTeamMember newPerson: ', selectedPerson);
+    console.log('teamMembers[selectedPerson]: ', teamMembers[selectedPerson]);
+
+    setMemberToEdit(teamMembers[selectedPerson]);
+
+    // setTeamMembers(targetPerson);
   };
   
   const delTeamMember = id => {
@@ -34,9 +59,17 @@ function App() {
 
   return (
     <div className="App">
-      <h1 className="App-header"><img src={logo} className="App-logo" />My Team</h1>
-      <PersonForm addTeamMember={addTeamMember} />
-      <TeamMembers teamMembers={teamMembers} delTeamMember={delTeamMember} />
+      <h1 className="App-header"><img src={logo} className="App-logo" alt="App Logo" />My Team</h1>
+      <PersonForm 
+        addTeamMember={addTeamMember} 
+        editTeamMember={editTeamMember} 
+        memberToEdit={memberToEdit} 
+      />
+      <TeamMembers 
+        teamMembers={teamMembers} 
+        editTeamMember={editTeamMember} 
+        delTeamMember={delTeamMember} 
+      />
     </div>
   );
 }
