@@ -59,7 +59,7 @@ const PersonForm = props => {
       />
 
       <label htmlFor="role">Role</label>
-      <select id="role" name="role" onChange={handleChange}>
+      <select id="role" name="role" value={person.role} onChange={handleChange}>
         <option value="">...Select a Role...</option>
         <option value="Director of Software Engineering">Director of Software Engineering</option>
         <option value="Application Architect">Application Architect</option>
